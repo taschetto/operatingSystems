@@ -16,10 +16,10 @@ int main(int argc, char *argv[]){
 	long int rc, t;
 
 	for(t=0; t<NUM_THREADS; t++){
-		printf("In main: creating thread %d\n", t);
+		printf("In main: creating thread %ld\n", t);
 		rc = pthread_create(&threads[t], NULL, PrintHello, (void *)t);
 		if (rc){
-			printf("ERROR code is %d\n", rc);
+			printf("ERROR code is %ld\n", rc);
 			return -1;
 		}
 	}

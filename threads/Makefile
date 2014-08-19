@@ -1,5 +1,15 @@
-all:
-	gcc ex1.c -o bin/ex1 
-	gcc ex2.c -o bin/ex2 
-	gcc ex3.c -o bin/ex3 
-	gcc ex4.c -o bin/ex4 
+CC := gcc
+CFLAGS := -Wall -g -pthread
+SRC := $(wildcard *.c)
+TARGET := $(addprefix bin/, $(SRC:.c=))
+
+all: | bin $(TARGET)
+
+bin/% : %.c
+	$(CC) $(CFLAGS) $< -o $@ 
+
+bin:
+	mkdir bin
+
+clean:
+	rm -fr bin/

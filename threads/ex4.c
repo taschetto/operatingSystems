@@ -1,11 +1,12 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <malloc.h>
+#include <unistd.h>
 
 void *PrintHello(void *name){
 
 	while(1){
-		printf("Hello World! It's me, thread %s!, (thread: %x)\n", name, pthread_self());
+		printf("Hello World! It's me, thread %s!, (thread: %x)\n", (char *)name, (unsigned)pthread_self());
 		sleep(1);
 	}
 }

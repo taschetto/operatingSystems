@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <sys/wait.h>
 
-main(int argc, char *argv[]){
+int main(int argc, char *argv[]){
 	int pid;
 	/* fork a child process */
 	pid = fork();
@@ -21,5 +22,6 @@ main(int argc, char *argv[]){
 		printf("Child completed -- parent now exiting.\n");
 		exit( 0 );
 	}
+	return 0;
 }
 
