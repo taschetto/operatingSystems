@@ -1,7 +1,7 @@
 CC := gcc
 CFLAGS := -Wall -g
 SRC := $(wildcard *.c)
-TARGET := $(addprefix bin/, $(SRC:.c=))
+TARGET := $(SRC:%.c=bin/%)
 
 all: | bin $(TARGET)
 
