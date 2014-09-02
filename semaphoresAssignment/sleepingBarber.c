@@ -5,21 +5,24 @@
 #define CHAIRS 6
 #define CUSTOMERS 10
 
-sem_t barberReady;
-sem_t accessWRSeats;
-sem_t custReady;
+sem_t customers;
+sem_t barbers;
+sem_t mutex;
+
 int waiting = 0;
 
 void *barber(void *arg)
 {
   while(1)
   {
-    sem_wait(&custReady);
-    sem_wait(&accessWRSeats);
+    printf("Barbeiro dormindo.\n");
+    sem_wait(&customers);
+    sem_wait(&mutex);
+    printf("Barbeiro acordou.\n");
     waiting--;
-    sem_post(&barberReady);
-    sem_post(&accessWRSeats);
-    printf("barbeiro corta cabelo do cliente\n");
+    sem_post(&barbers);
+    sem_post(&mutex);
+    printf("Barbeiro cortou cabelo do cliente.\n");
   }
 }
 
@@ -27,24 +30,21 @@ void *customer(void *arg)
 {
   long int i;
   i = (long int)arg;
-  while(1)
-  {
-  sem_wait(&accessWRSeats);
+
+  sem_wait(&mutex);
   if (waiting < CHAIRS)
   {
     waiting++;
-    sem_post(&custReady);
-    sem_post(&accessWRSeats);
-    sem_wait(&barberReady);
-    printf("cliente %ld corta o cabelo\n", i);
+    sem_post(&customers);
+    sem_post(&mutex);
+    sem_wait(&barbers);
+    printf("Cliente %ld teve o cabelo cortado.\n", i);
   }
   else
   {
-    sem_post(&accessWRSeats);
-    printf("cliente %ld vai embora sem cortar o cabelo\n", i);
+    sem_post(&mutex);
+    printf("Cliente %ld vai embora sem cortar o cabelo.\n", i);
   }
-  }
-
   return 0;
 }
 
@@ -52,14 +52,14 @@ int main(void){
   long int i;
   pthread_t tbarber, tcustomer[CUSTOMERS];
         
-  sem_init(&barberReady, 0, 0);
-  sem_init(&accessWRSeats, 0, 1);
-  sem_init(&custReady, 0, 0);
+  sem_init(&customers, 0, 0);
+  sem_init(&barbers, 0, 0);
+  sem_init(&mutex, 0, 1);
 
   pthread_create(&tbarber, NULL, barber, NULL);
 
   for (i = 1; i <= CUSTOMERS; i++)
-    pthread_create(&tcustomer[i-1], NULL, customer, (void *)i);
+    pthread_create(&tcustomer[i - 1], NULL, customer, (void *)i);
 
   pthread_exit(NULL); 
   return(0);

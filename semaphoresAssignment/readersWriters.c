@@ -3,47 +3,47 @@
 #include <semaphore.h>
 #include <stdlib.h>
 
-#define READERS 2
+#define READERS 5
 #define WRITERS 1
 
-sem_t mutex, db;
-int rc = 0;
-int dado = 0;
+sem_t mutex;
+sem_t db;
+
+int readCount = 0;
+int data = 0;
 
 void *reader(void *arg)
 {
   long int i;
   i = (long int)arg;
-  int dadoLocal;
 
   while(1)
   {
     sem_wait(&mutex);
-    rc++;
-    if (rc == 1) sem_wait(&db);
+      readCount++;
+      if (readCount == 1)
+        sem_wait(&db);
     sem_post(&mutex);
-    dadoLocal = dado;
-    printf("leitor %ld le dado=%d\n", i, dado);
+
+    printf("Reader %ld (%d) reads data (%d)\n", i, readCount, data);
+
     sem_wait(&mutex);
-    rc--;
-    if (rc == 0) sem_post(&db);
+      readCount--;
+      if (readCount == 0)
+        sem_post(&db);
     sem_post(&mutex);
-    printf("leitor %ld usa dadoLocal=%d\n", i, dadoLocal);
   }
 }
 
 void *writer(void *arg){
   long int i;
   i = (long int)arg;
-  int dadoLocal;
 
   while(1)
   {
-    dadoLocal = rand();
-    printf("escritor %ld prepara dadoLocal=%d\n", i, dado);
     sem_wait(&db);
-    dado = dadoLocal;
-    printf("escritor %ld escreve dado=%d\n", i, dado);
+      data = data + 1;
+      printf("Writer %ld updates data (%d).\n", i, data);
     sem_post(&db);
   }
 }
@@ -56,10 +56,10 @@ int main(void){
   sem_init(&db, 0, 1);
 
   for(i = 1; i <= READERS; i++)
-    pthread_create(&treader[i-1], NULL, reader, (void *)i);
+    pthread_create(&treader[i - 1], NULL, reader, (void *)i);
 
   for (i = 1; i <= WRITERS; i++)
-    pthread_create(&twriter[i-1], NULL, writer, (void *)i);
+    pthread_create(&twriter[i - 1], NULL, writer, (void *)i);
 
   pthread_exit(NULL); 
   return(0);
