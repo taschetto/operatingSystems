@@ -26,3 +26,6 @@
 # Dirty stuff
 *.swp
 *.~
+
+# Executables without extension
+/tp1/simple

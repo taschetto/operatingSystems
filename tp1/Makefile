@@ -1,4 +1,4 @@
-TARGET = simpleThreads
+TARGET = simple
 CC = gcc
 CFLAGS = -Wall -pthread -I.
 DEPS = gtwait.h

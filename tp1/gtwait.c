@@ -2,11 +2,11 @@
 #include "gtwait.h"
 
 #ifndef FALSE
-  #define FALSE       0
+  #define FALSE 0
 #endif
 
 #ifndef TRUE
-  #define TRUE        1
+  #define TRUE 1
 #endif
 
 int* flag;
@@ -23,7 +23,7 @@ void gtInit(int threads)
   turn = 0;
 }
 
-int checkOthers(int tid)
+int gtCheck(int tid)
 {
   int i = 0;
   for (i = 0; i < threadCount; i++)
@@ -35,10 +35,10 @@ int checkOthers(int tid)
   return FALSE;
 }
 
-void gtwait(int tid)
+void gtWait(int tid)
 {
   flag[tid] = TRUE;
-  while (checkOthers(tid) == TRUE)
+  while (gtCheck(tid) == TRUE)
   {
     if (turn != tid)
     {
@@ -49,7 +49,7 @@ void gtwait(int tid)
   }
 }
 
-void gtpost(int tid)
+void gtPost(int tid)
 {
   turn++;
   turn %= threadCount;

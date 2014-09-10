@@ -1,4 +1,4 @@
 void gtInit(int);
-int checkOthers(int);
-void gtwait(int);
-void gtpost(int);
+int gtCheck(int);
+void gtWait(int);
+void gtPost(int);
