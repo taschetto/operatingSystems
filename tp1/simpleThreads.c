@@ -14,11 +14,11 @@ void *task(void *arg){
 
 	while(1)
   {
-		gtwait(tid, THREADS);
+		gtwait(tid);
 		printf("thread %d entrando na regiao critica.\n", tid);
     nanosleep((struct timespec[]){{0, 5*SLEEP_NS}}, NULL);
 		printf("thread %d saindo da regiao critica.\n", tid);
-		gtpost(tid, THREADS);
+		gtpost(tid);
     nanosleep((struct timespec[]){{0, 5*SLEEP_NS}}, NULL);
 	}
 }

@@ -11,20 +11,22 @@
 
 int* flag;
 int turn;
+int threadCount;
 
 void gtInit(int threads)
 {
-  flag = malloc(threads * sizeof(int));
+  threadCount = threads;
+  flag = malloc(threadCount * sizeof(int));
   int i;
-  for (i = 0; i < threads; i++)
+  for (i = 0; i < threadCount; i++)
     flag[i] = FALSE;
   turn = 0;
 }
 
-int checkOthers(int tid, int threads)
+int checkOthers(int tid)
 {
   int i = 0;
-  for (i = 0; i < threads; i++)
+  for (i = 0; i < threadCount; i++)
   {
     if (i == tid) continue;
     if (flag[i] == TRUE) return TRUE;
@@ -33,23 +35,23 @@ int checkOthers(int tid, int threads)
   return FALSE;
 }
 
-void gtwait(int tid, int threads)
+void gtwait(int tid)
 {
   flag[tid] = TRUE;
-  while (checkOthers(tid, threads) == TRUE)
+  while (checkOthers(tid) == TRUE)
   {
     if (turn != tid)
     {
       flag[tid] = FALSE;
-      while (turn != tid); //nanosleep((struct timespec[]){{0, SLEEP_NS}}, NULL);
+      while (turn != tid);
       flag[tid] = TRUE;
     }
   }
 }
 
-void gtpost(int tid, int threads)
+void gtpost(int tid)
 {
   turn++;
-  turn %= threads;
+  turn %= threadCount;
   flag[tid] = FALSE;
 }

@@ -1,7 +1,15 @@
-all:
-	gcc main.c -Wall -pthread -o main
-	gcc ex.c -Wall -pthread -o ex
+TARGET = simpleThreads
+CC = gcc
+CFLAGS = -Wall -pthread -I.
+DEPS = gtwait.h
+OBJ = $(TARGET:%=%.o) gtwait.o
+
+%.o : %.c $(DEPS)
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(TARGET): $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -fr main
-	rm -fr ex
+	rm -fr *.o
+	rm -fr $(TARGET)
