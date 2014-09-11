@@ -10,8 +10,6 @@ void *task(void *arg){
 	int tid;
 	tid = (int)(long int)arg;
 
-  printf("hello from thread %d!\n", tid);
-
 	while(1)
   {
 		gtWait(tid);

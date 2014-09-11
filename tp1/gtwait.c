@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <time.h>
 #include "gtwait.h"
 
 #ifndef FALSE
@@ -51,7 +52,7 @@ void gtWait(int tid)
 
 void gtPost(int tid)
 {
-  turn++;
-  turn %= threadCount;
+  srand(time(NULL));
+  turn = rand() % threadCount;
   flag[tid] = FALSE;
 }

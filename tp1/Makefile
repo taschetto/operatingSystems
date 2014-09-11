@@ -1,14 +1,19 @@
-TARGET = simple
 CC = gcc
 CFLAGS = -Wall -pthread -I.
+TARGET = simple dining
 DEPS = gtwait.h
-OBJ = $(TARGET:%=%.o) gtwait.o
+OBJ = gtwait.o
+
+all: $(TARGET)
+
+simple: simple.o $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+
+dining: dining.o $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
 
 %.o : %.c $(DEPS)
 	$(CC) -c $(CFLAGS) -o $@ $<
-
-$(TARGET): $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
 
 clean:
 	rm -fr *.o
