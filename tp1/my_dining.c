@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 
-#include "gtwait.h"
+#include "lock.h"
 
 #define NUM_OF_PHILOSOPHERS 5
 #define LEFT(x) ((x+NUM_OF_PHILOSOPHERS-1)%NUM_OF_PHILOSOPHERS)
@@ -43,20 +43,20 @@ void test(unsigned long i)
 
 void take_forks(unsigned long i)
 {
-	gtWait((int)i);
+	lock((int)i);
 	state[i] = HUNGRY;
 	test(i);
-	gtPost((int)i);
+	unlock((int)i);
 	sem_wait(&s[i]);
 }
 
 void put_forks(unsigned long i)
 {
-	gtWait((int)i);
+	lock((int)i);
 	state[i] = THINKING;
 	test(LEFT(i));
 	test(RIGHT(i));
-	gtPost((int)i);
+	unlock((int)i);
 }
 
 void *philosopher(void *thread_id)
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	pthread_t philosophers[NUM_OF_PHILOSOPHERS];
 	int ret;
 
-	gtInit(NUM_OF_PHILOSOPHERS);
+	lockInit(NUM_OF_PHILOSOPHERS);
 	
 	for (int i = 0; i < NUM_OF_PHILOSOPHERS; i++) {
 		sem_init(&s[i], 0, 0);

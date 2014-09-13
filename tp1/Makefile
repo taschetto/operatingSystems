@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -pthread -I. -std=c99
 TARGET = simple dining my_dining
-DEPS = gtwait.h
-OBJ = gtwait.o
+DEPS = lock.h
+OBJ = lock.o
 
 all: $(TARGET)
 

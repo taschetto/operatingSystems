@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <time.h>
-#include "gtwait.h"
+#include "lock.h"
 
 #ifndef FALSE
   #define FALSE 0
@@ -14,7 +14,7 @@ int* flag;
 int turn;
 int threadCount;
 
-void gtInit(int threads)
+void lockInit(int threads)
 {
   threadCount = threads;
   flag = malloc(threadCount * sizeof(int));
@@ -36,7 +36,7 @@ int gtCheck(int tid)
   return FALSE;
 }
 
-void gtWait(int tid)
+void lock(int tid)
 {
   flag[tid] = TRUE;
   while (gtCheck(tid) == TRUE)
@@ -50,7 +50,7 @@ void gtWait(int tid)
   }
 }
 
-void gtPost(int tid)
+void unlock(int tid)
 {
   srand(time(NULL));
   turn = rand() % threadCount;

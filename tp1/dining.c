@@ -3,7 +3,7 @@
 #include <semaphore.h>
 #include <unistd.h>
 #include <time.h>
-#include "gtwait.h"
+#include "lock.h"
 
 #define SLEEP_NS 100000000
 
@@ -29,7 +29,7 @@ int main()
 	pthread_t t[N];
 
 	sem_init(&mutex, 0, 1);
-  //gtInit(N);
+  //lockInit(N);
 
 	for (i = 1; i <= N; i++)
 		sem_init(&s[i - 1], 0, 1);
@@ -56,13 +56,13 @@ void* philosopher(void* arg) 	/* i: philosopher number, from 0 to N-1 */
 
 void take_forks(long int i) 		/* i: philosopher number, from 0 to N-1 */
 {
-  //gtWait(i);
+  //lock(i);
 	sem_wait(&mutex); 	/* enter critical region */
 	state[i] = HUNGRY; 	/* record fact that philosopher i is hungry */
 	test(i); 		        /* try to acquire 2 forks */
   nanosleep((struct timespec[]){{0, 5 * SLEEP_NS}}, NULL);
 
-  //gtPost(i);
+  //unlock(i);
 
 	sem_post(&mutex); 	/* exit critical region */
 	sem_wait(&s[i]); 		/* block if forks were not acquired */
@@ -70,13 +70,13 @@ void take_forks(long int i) 		/* i: philosopher number, from 0 to N-1 */
 
 void put_forks(long int i) 	/* i: philosopher number, from 0 to N-1 */
 {
-  //gtWait(i);
+  //lock(i);
 	sem_wait(&mutex); 	  /* enter critical region */
 	state[i] = THINKING; 	/* philosopher has finished eating */
 	test(LEFT); 		      /* see if left neighbor can now eat */
 	test(RIGHT); 		      /* see if right neighbor can now eat */
   nanosleep((struct timespec[]){{0, 5 * SLEEP_NS}}, NULL);
-  //gtPost(i);
+  //unlock(i);
 	sem_post(&mutex);		  /* exit critical region */
 }
 
