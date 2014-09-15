@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pthread -I. -std=c99
+CFLAGS = -Wall -pthread -I. -std=c99 -D_POSIX_C_SOURCE=199309L
 TARGET = simple dining
 DEPS = lock.h
 OBJ = lock.o
