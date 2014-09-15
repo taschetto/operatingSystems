@@ -24,7 +24,7 @@ void lockInit(int threads)
   turn = 0;
 }
 
-int gtCheck(int tid)
+int lockCheck(int tid)
 {
   int i = 0;
   for (i = 0; i < threadCount; i++)
@@ -39,7 +39,7 @@ int gtCheck(int tid)
 void lock(int tid)
 {
   flag[tid] = TRUE;
-  while (gtCheck(tid) == TRUE)
+  while (lockCheck(tid) == TRUE)
   {
     if (turn != tid)
     {
