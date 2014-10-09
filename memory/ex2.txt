@@ -1,0 +1,10 @@
+12180247@l1815091 memory (master) $ ./ex2 
+&etext = 0x40073d
+&end = 0x601058
+
+main = 0x4005cd
+&I = 0x601054
+&i = 0x7fff28a48f14
+&argc = 0x7fff28a48f0c
+&ii = 0x7fff28a48f18
+ii = 0xeed010

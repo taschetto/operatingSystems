@@ -1,0 +1,5 @@
+12180247@l1815091 memory (master) $ ./ex4
+sbrk(0) before malloc(4): 0x2324000
+sbrk(0) after `i1 = (int*)malloc(4)': 0x2345000
+sbrk(0) after `i2 = (int*)malloc(4)': 0x2345000
+i1 = 0x2324010, i2 = 0x2324030

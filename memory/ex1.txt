@@ -1,0 +1,2 @@
+12180247@l1815091 bin (master) $ ./ex1 
+Segmentation fault

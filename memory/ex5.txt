@@ -1,0 +1,15 @@
+12180247@l1815091 memory (master) $ ./ex5 a b c d e f g h i j k l
+argc = 13. argc = 0x8c0b8110, &argv = 0x8c0b8110, &i = 0x8c0b812c
+argc = 12. argc = 0x8c0b80e0, &argv = 0x8c0b80e0, &i = 0x8c0b80fc
+argc = 11. argc = 0x8c0b80b0, &argv = 0x8c0b80b0, &i = 0x8c0b80cc
+argc = 10. argc = 0x8c0b8080, &argv = 0x8c0b8080, &i = 0x8c0b809c
+argc = 9. argc = 0x8c0b8050, &argv = 0x8c0b8050, &i = 0x8c0b806c
+argc = 8. argc = 0x8c0b8020, &argv = 0x8c0b8020, &i = 0x8c0b803c
+argc = 7. argc = 0x8c0b7ff0, &argv = 0x8c0b7ff0, &i = 0x8c0b800c
+argc = 6. argc = 0x8c0b7fc0, &argv = 0x8c0b7fc0, &i = 0x8c0b7fdc
+argc = 5. argc = 0x8c0b7f90, &argv = 0x8c0b7f90, &i = 0x8c0b7fac
+argc = 4. argc = 0x8c0b7f60, &argv = 0x8c0b7f60, &i = 0x8c0b7f7c
+argc = 3. argc = 0x8c0b7f30, &argv = 0x8c0b7f30, &i = 0x8c0b7f4c
+argc = 2. argc = 0x8c0b7f00, &argv = 0x8c0b7f00, &i = 0x8c0b7f1c
+argc = 1. argc = 0x8c0b7ed0, &argv = 0x8c0b7ed0, &i = 0x8c0b7eec
+argc = 0. argc = 0x8c0b7ea0, &argv = 0x8c0b7ea0, &i = 0x8c0b7ebc

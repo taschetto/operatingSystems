@@ -1,0 +1,83 @@
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fff33da314c
+&ii = 0x7fff33da3158
+ii = 0x25e7010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x0
+Reading 0x0: Segmentation fault
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fff6d08950c
+&ii = 0x7fff6d089518
+ii = 0x635010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x400000
+Reading 0x400000: 127
+Writing 127 back to 0x400000: Segmentation fault
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fff13082afc
+&ii = 0x7fff13082b08
+ii = 0xa18010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x400fff
+Reading 0x400fff: 0
+Writing 0 back to 0x400fff: Segmentation fault
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fffcf57c48c
+&ii = 0x7fffcf57c498
+ii = 0xc08010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x401000
+Reading 0x401000: Segmentation fault
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fff6e53202c
+&ii = 0x7fff6e532038
+ii = 0x14d4010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x5ff000
+Reading 0x5ff000: Segmentation fault
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fffa0844e1c
+&ii = 0x7fffa0844e28
+ii = 0x171a010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x601078
+Reading 0x601078: 0
+Writing 0 back to 0x601078: ok
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fff203dbfbc
+&ii = 0x7fff203dbfc8
+ii = 0x1c03010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x601fff
+Reading 0x601fff: 0
+Writing 0 back to 0x601fff: ok
+
+12180247@l1815091 memory (master) $ ./ex3 
+&i = 0x7fff32c4e1ac
+&ii = 0x7fff32c4e1b8
+ii = 0x1228010
+&etext = 0x4008ed
+&end = 0x601080
+
+Enter memory location in hex (start with 0x): 0x602000
+Reading 0x602000: Segmentation fault
