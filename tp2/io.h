@@ -17,8 +17,8 @@ int load_fs(const char *fs_image_name);
 // Unloads the image currently in use
 int unload_fs();
 // Reads a cluster from the loaded image
-int read_cluster(unsigned int cluster_id, char *buffer);
+int read_cluster(unsigned int cluster_index, char *buffer);
 // Writes a cluster to the loaded image
-int write_cluster(unsigned int cluster_id, const char *buffer);
+int write_cluster(unsigned int cluster_index, const char *buffer);
 
 #endif // IO_H
