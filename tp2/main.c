@@ -4,6 +4,10 @@
 #include "helpers.h"
 #include "io.h"
 #include "fs.h"
+	
+uint32_t fat[1024];
+uint8_t data_block[2048];
+struct dir_entry dir[64];
 
 void io_test()
 {
@@ -18,7 +22,7 @@ void io_test()
     error();
     return;
   }
-
+  
   ok();
   printf("Create new file system in 'fat.part'...");
 
