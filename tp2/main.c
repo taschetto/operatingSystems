@@ -3,6 +3,7 @@
 #include <string.h>
 #include "helpers.h"
 #include "io.h"
+#include "fs.h"
 
 void io_test()
 {
@@ -72,8 +73,43 @@ void io_test()
   ok();
 }
 
+
+void fs_test()
+{
+	int status;
+	const char *path1[] = {""};
+	const char *path2[] = {"etc"};
+	struct dir_entry entries[64];
+	int entries_count;
+
+	load_fs("fat.part");
+
+	format();
+
+	create_dir_entry(path1, 0, "etc", DIR_ENTRY_ATTR_DIRECTORY);
+	create_dir_entry(path2, 1, "fstab", DIR_ENTRY_ATTR_FILE);
+
+	list_dir(path1, 0, entries, &entries_count);
+
+	for (int i = 0; i < entries_count; i++) {
+		printf ("--->%s     %s\n", entries[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", entries[i].filename);
+	}
+
+	list_dir(path2, 1, entries, &entries_count);
+
+	for (int i = 0; i < entries_count; i++) {
+		printf ("--->%s     %s\n", entries[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", entries[i].filename);
+	}
+
+	unload_fs();
+}
+
 int main()
 {
   io_test();
+
+  fs_test();
+
+	return 0;
 }
 
