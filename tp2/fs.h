@@ -25,7 +25,7 @@ struct dir_entry {
 #pragma pack(pop)
 
 int format();
-int create_dir_entry(const char *path[], int path_depth, char *new_entry_name, uint8_t attr);
-int list_dir(const char *path[], int path_depth, struct dir_entry *entries, int *entries_size);
+int create_file_or_dir(const char *path[], int path_depth, char *new_entry_name, uint8_t attr);
+int list_dir(const char *path[], int path_depth);
 
 #endif // FS_H

@@ -15,23 +15,27 @@
 #define FAT_FIRST_CLUSTER_INDEX 1
 #define ROOT_DIR_CLUSTER_INDEX  3
 
+// Allowed fs data structures - real declaration in 'main.c'
+extern uint32_t fat[1024];
+extern uint8_t data_block[CLUSTER_SIZE];
+extern struct dir_entry dir[64];
+
 int cluster_index_from_path(const char *path[], int path_depth, unsigned int *dir_entries_index)
 {
 	int status = -1;
 	unsigned int current_cluster_index;
 	unsigned int next_cluster_index;
-	struct dir_entry dir_entries[64];
 	int i;
 
 	current_cluster_index = next_cluster_index = ROOT_DIR_CLUSTER_INDEX;
-	status = read_cluster(current_cluster_index, (char*)dir_entries);
+	status = read_cluster(current_cluster_index, (uint8_t*)dir);
 	if (status == 0) {
 		for (i = 0; i < path_depth; i++) {
 			for (int j = 0; j < 64; j++) {
-				if (dir_entries[j].first_block > 0) {
-					if (strncmp(path[i], (const char*)dir_entries[j].filename, 16) == 0) {
-						if (dir_entries[j].attributes == DIR_ENTRY_ATTR_DIRECTORY) {
-							next_cluster_index = dir_entries[j].first_block;
+				if (dir[j].first_block > 0) {
+					if (strncmp(path[i], (const char*)dir[j].filename, 16) == 0) {
+						if (dir[j].attributes == DIR_ENTRY_ATTR_DIRECTORY) {
+							next_cluster_index = dir[j].first_block;
 						}
 					}
 				}
@@ -53,7 +57,7 @@ int cluster_index_from_path(const char *path[], int path_depth, unsigned int *di
 	return status;
 }
 
-int next_free_cluster(uint32_t *fat, unsigned int *next_free_cluster)
+int next_free_cluster(unsigned int *next_free_cluster)
 {
 	for (unsigned int i = 4; i < 1024; i++) {
 		if (fat[i] == FAT_FREE_CLUSTER) {
@@ -77,25 +81,25 @@ int index_of_first_free_entry(struct dir_entry *dir_entries, int *index)
 	return -1;
 }
 
-int read_fat(uint32_t *fat)
+int read_fat()
 {
 	int status;
 
-	status = read_cluster(FAT_FIRST_CLUSTER_INDEX, (char*)&fat[0]);
+	status = read_cluster(FAT_FIRST_CLUSTER_INDEX, (uint8_t*)&fat[0]);
 	if (status == 0) {
-		status = read_cluster(FAT_FIRST_CLUSTER_INDEX + 1, (char*)&fat[512]);
+		status = read_cluster(FAT_FIRST_CLUSTER_INDEX + 1, (uint8_t*)&fat[512]);
 	}
 
 	return status;
 }
 
-int write_fat(uint32_t *fat)
+int write_fat()
 {
 	int status;
 
-	status = write_cluster(FAT_FIRST_CLUSTER_INDEX, (char*)&fat[0]);
+	status = write_cluster(FAT_FIRST_CLUSTER_INDEX, (uint8_t*)&fat[0]);
 	if (status == 0) {
-		status = write_cluster(FAT_FIRST_CLUSTER_INDEX + 1, (char*)&fat[512]);
+		status = write_cluster(FAT_FIRST_CLUSTER_INDEX + 1, (uint8_t*)&fat[512]);
 	}
 
 	return status;
@@ -116,22 +120,21 @@ int find_entry(char *entry_name, struct dir_entry *entries)
 int add_dir_entry(struct dir_entry *entry, unsigned int entries_cluster_index)
 {
 	int status;
-	struct dir_entry dir_entries[64];
 	int first_free_entry;
 
-	status = read_cluster(entries_cluster_index, (char*)dir_entries);
+	status = read_cluster(entries_cluster_index, (uint8_t*)dir);
 	if (status == 0) {
-		if (find_entry((char*)entry->filename, dir_entries) == 0) {
+		if (find_entry((char*)entry->filename, dir) == 0) {
 			status = -1; // Duplicated entry
 		} else {
-			status = index_of_first_free_entry(dir_entries, &first_free_entry);
+			status = index_of_first_free_entry(dir, &first_free_entry);
 			if (status == 0) {
-				dir_entries[first_free_entry].attributes = entry->attributes;
-				strncpy((char*)dir_entries[first_free_entry].filename,(char*)entry->filename, 16);
-				dir_entries[first_free_entry].first_block = entry->first_block;
-				dir_entries[first_free_entry].size = entry->size;
+				dir[first_free_entry].attributes = entry->attributes;
+				strncpy((char*)dir[first_free_entry].filename,(char*)entry->filename, 16);
+				dir[first_free_entry].first_block = entry->first_block;
+				dir[first_free_entry].size = entry->size;
 
-				status = write_cluster(entries_cluster_index, (char*)dir_entries);
+				status = write_cluster(entries_cluster_index, (uint8_t*)dir);
 			}
 		}
 	}
@@ -139,20 +142,18 @@ int add_dir_entry(struct dir_entry *entry, unsigned int entries_cluster_index)
 	return status;
 }
 
-int create_dir_entry(const char *path[], int path_depth, char *new_entry_name, uint8_t attr)
+int create_file_or_dir(const char *path[], int path_depth, char *new_entry_name, uint8_t attr)
 {
 	int status;
 	unsigned int dir_entries_index;
 	unsigned int free_cluster_index;
 	struct dir_entry d_entry;
-	struct dir_entry dir_entries[64];
-	uint32_t fat[1024];
 
 	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
 	if (status == 0) {
-		status = read_fat(fat);
+		status = read_fat();
 		if (status == 0) {
-			status = next_free_cluster(fat, &free_cluster_index);
+			status = next_free_cluster(&free_cluster_index);
 			if (status == 0) {
 				d_entry.attributes = attr;
 				strncpy((char*)d_entry.filename, (char*)new_entry_name, 16);
@@ -166,12 +167,12 @@ int create_dir_entry(const char *path[], int path_depth, char *new_entry_name, u
 				if (status == 0) {
 					fat[free_cluster_index] = FAT_EOF;
 					if (attr == DIR_ENTRY_ATTR_DIRECTORY) {
-						memset(dir_entries, 0, sizeof(dir_entries));
-						status = write_cluster(free_cluster_index, (char*)dir_entries);
+						memset(dir, 0, sizeof(dir));
+						status = write_cluster(free_cluster_index, (uint8_t*)dir);
 					}
 
 					if (status == 0) {
-						status = write_fat(fat);
+						status = write_fat();
 					}
 				}
 			}
@@ -185,22 +186,21 @@ int create_dir_entry(const char *path[], int path_depth, char *new_entry_name, u
 
 int format()
 {
-	char cluster[CLUSTER_SIZE];
 	int status;
 
 	// intialize boot block
-	memset(cluster, 0xbb, CLUSTER_SIZE);
-	status = write_cluster(0, cluster);
+	memset(data_block, 0xbb, CLUSTER_SIZE);
+	status = write_cluster(0, data_block);
 	if (status == 0) {
 		// intialize FAT
-		memset(cluster, FAT_FREE_CLUSTER, CLUSTER_SIZE);
-		status = write_cluster(1, cluster);
+		memset(data_block, FAT_FREE_CLUSTER, CLUSTER_SIZE);
+		status = write_cluster(1, data_block);
 		if (status == 0) {
-			status = write_cluster(2, cluster);
+			status = write_cluster(2, data_block);
 			if (status == 0) {
 				// initialize root dir entries
-				memset(cluster, 0, CLUSTER_SIZE);
-				status = write_cluster(3, cluster);
+				memset(data_block, 0, CLUSTER_SIZE);
+				status = write_cluster(3, data_block);
 			}
 		}
 	}
@@ -208,24 +208,14 @@ int format()
 	return status;
 }
 
-int list_dir(const char *path[], int path_depth, struct dir_entry *entries, int *entries_size)
+int list_dir(const char *path[], int path_depth)
 {
 	int status;
 	unsigned int dir_entries_index;
-	struct dir_entry dir_entries[64];
 
-	*entries_size = 0;
 	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
 	if (status == 0) {
-		status = read_cluster(dir_entries_index, (char*)dir_entries);
-		if (status == 0) {
-			for (int i = 0; i < 64; i++) {
-				if (dir_entries[i].first_block > 0) {
-					memcpy(&entries[*entries_size], &dir_entries[i], sizeof(struct dir_entry));
-					(*entries_size)++;
-				}
-			}
-		}
+		status = read_cluster(dir_entries_index, (uint8_t*)dir);
 	}
 
 	return status;
