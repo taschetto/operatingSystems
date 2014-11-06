@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "io.h"
 #include "fs.h"
+#include "shell.h"
 	
 uint32_t fat[1024];
 uint8_t data_block[2048];
@@ -114,6 +115,7 @@ int main()
 
   fs_test();
 
+  shell();
 	return 0;
 }
 
