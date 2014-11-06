@@ -8,7 +8,7 @@
 #define IO_H
 
 #define CLUSTER_SIZE 2048
-#define NUMBER_OF_CLUSERS 1024
+#define NUMBER_OF_CLUSTERS 1024
 
 // Creates a new zeroed file (not formated!)
 int create_new_fs(const char *fs_image_name);

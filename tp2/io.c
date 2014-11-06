@@ -18,14 +18,14 @@ int current_descriptor = NO_DESCRIPTOR;
 int create_new_fs(const char *fs_image_name)
 {
 	int fd;
-	int image_size = CLUSTER_SIZE * NUMBER_OF_CLUSERS;
+	int image_size = CLUSTER_SIZE * NUMBER_OF_CLUSTERS;
 	char initial_data[CLUSTER_SIZE] = { 0 };
 
 	fd = open(fs_image_name, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU);
 	if (fd < 0)
 		return -1;
 
-  if (write(fd, initial_data, image_size < 0))
+  if (write(fd, initial_data, image_size) < 0)
   {
     close(fd);
     return -1;
