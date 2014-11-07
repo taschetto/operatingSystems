@@ -122,6 +122,19 @@ int find_entry(char *entry_name, struct dir_entry *entries, int *index)
 	return -1;
 }
 
+int count_active_entries(struct dir_entry *entries)
+{
+	int counter = 0;
+
+	for (int i = 0; i < 64; i++) {
+		if (entries[i].first_block > 0) {
+			counter++;
+		}
+	}
+
+	return counter;
+}
+
 int add_dir_entry(struct dir_entry *entry, unsigned int entries_cluster_index)
 {
 	int status;
@@ -336,6 +349,10 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 			status = find_entry(file_name, dir, &entry_index);
 			if (status == 0) {
 				TRACE();
+				// This command only works with regular files!
+				if (dir[entry_index].attributes != DIR_ENTRY_ATTR_FILE) {
+					return -1;
+				}
 				full_clusters = dir[entry_index].size / CLUSTER_SIZE;
 				bytes_in_last_cluster = dir[entry_index].size % CLUSTER_SIZE;
 				total_clusters = full_clusters + (bytes_in_last_cluster > 0 ? 1 : 0);
@@ -375,4 +392,60 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 	}
 
 	return status;
+}
+
+int rm_dir(const char *path[], int path_depth, char *dir_name)
+{
+	unsigned int dir_entries_index;
+	int entry_index;
+	int status;
+
+	// get the parent directory cluster index
+	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
+	if (status != 0) {
+		return -1;
+	}
+	// Read the parent directory
+	status = read_cluster(dir_entries_index, (uint8_t *)dir);
+	if (status != 0) {
+		return -1;
+	}
+	// Find the entry that will be deleted
+	status = find_entry(dir_name, dir, &entry_index);
+	if (status != 0) {
+		return -1;
+	}
+	// Test.This commando only works on directories.
+	if (dir[entry_index].attributes != DIR_ENTRY_ATTR_DIRECTORY) {
+		return -1;
+	}
+	// Read the directory that will be deleted
+	status = read_cluster(dir[entry_index].first_block, (uint8_t*)dir);
+	if (status != 0) {
+		return -1;
+	}
+	// Check if the directory is empty
+	if (count_active_entries(dir) > 0) {
+		return -1;
+	}
+	// Read the parent directory again
+	status = read_cluster(dir_entries_index, (uint8_t *)dir);
+	if (status != 0) {
+		return -1;
+	}
+	// Read FAT
+	read_fat();
+	// Free the entry related to the deleted directory
+	fat[dir[entry_index].first_block] = FAT_FREE_CLUSTER;
+	// Write FAT (really?)
+	write_fat();
+	// We are using first_block==0 to mark unused clusters
+	dir[entry_index].first_block = 0;
+	// Write the updated parent directory entries
+	status = write_cluster(dir_entries_index, (uint8_t*)dir);
+	if (status != 0) {
+		return -1;
+	}
+
+	return 0;
 }

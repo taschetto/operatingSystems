@@ -80,7 +80,9 @@ void fs_test()
 
 	create_file_or_dir(path1, 0, "etc", DIR_ENTRY_ATTR_DIRECTORY);
 	create_file_or_dir(path2, 1, "fstab", DIR_ENTRY_ATTR_FILE);
+	create_file_or_dir(path2, 1, "init.d", DIR_ENTRY_ATTR_DIRECTORY);
 
+	rm_dir(path2, 1, "init.d");
 	list_dir(path1, 0);
 
 	for (int i = 0; i < 64; i++) {

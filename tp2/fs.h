@@ -29,5 +29,6 @@ int format();
 int create_file_or_dir(const char *path[], int path_depth, char *new_entry_name, uint8_t attr);
 int list_dir(const char *path[], int path_depth);
 int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *data, unsigned int data_size);
+int rm_dir(const char *path[], int path_depth, char *dir_name);
 
 #endif // FS_H
