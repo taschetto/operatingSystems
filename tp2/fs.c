@@ -449,3 +449,53 @@ int rm_dir(const char *path[], int path_depth, char *dir_name)
 
 	return 0;
 }
+
+int rm_file(const char *path[], int path_depth, char *file_name)
+{
+	unsigned int dir_entries_index;
+	int entry_index;
+	int status;
+	uint32_t next_block;
+
+	// get the parent directory cluster index
+	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
+	if (status != 0) {
+		return -1;
+	}
+	// Read the parent directory
+	status = read_cluster(dir_entries_index, (uint8_t *)dir);
+	if (status != 0) {
+		return -1;
+	}
+	// Find the entry that will be deleted
+	status = find_entry(file_name, dir, &entry_index);
+	if (status != 0) {
+		return -1;
+	}
+	// Test.This commando only works on files.
+	if (dir[entry_index].attributes != DIR_ENTRY_ATTR_FILE) {
+		return -1;
+	}
+	// Read FAT
+	read_fat();
+	// Remove blocks from FAT
+	next_block = fat[dir[entry_index].first_block];
+	fat[dir[entry_index].first_block] = FAT_FREE_CLUSTER;
+	while (next_block != FAT_EOF) {
+		unsigned int temp_block;
+		temp_block = fat[next_block];
+		fat[next_block] = FAT_FREE_CLUSTER;
+		next_block = temp_block;
+	}
+	// Write FAT (really?)
+	write_fat();
+	// We are using first_block==0 to mark unused clusters
+	dir[entry_index].first_block = 0;
+	// Write the updated parent directory entries
+	status = write_cluster(dir_entries_index, (uint8_t*)dir);
+	if (status != 0) {
+		return -1;
+	}
+
+	return 0;
+}

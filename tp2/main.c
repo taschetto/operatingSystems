@@ -91,6 +91,7 @@ void fs_test()
 		}
 	}
 
+	rm_file(path2, 1, "fstab");
 	list_dir(path2, 1);
 
 	for (int i = 0; i < 64; i++) {
