@@ -18,7 +18,7 @@ void error()
 
 char ** tokenize(char* str, int* count)
 {
-  char** tokens;
+  char** tokens= NULL;
   char* token = strtok(str, DELIM);
   int n = 0;
 

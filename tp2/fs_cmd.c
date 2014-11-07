@@ -1,5 +1,7 @@
+#define _BSD_SOURCE
 #include <stdio.h>
 #include <string.h>
+#include <libgen.h>
 #include "fs_cmd.h"
 #include "fs.h"
 #include "io.h"

@@ -8,6 +8,7 @@
 #define FS_H
 
 #include <stdint.h>
+#include "io.h"
 
 #define DIR_ENTRY_ATTR_FILE      0
 #define DIR_ENTRY_ATTR_DIRECTORY 1
