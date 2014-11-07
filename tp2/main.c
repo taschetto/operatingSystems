@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "helpers.h"
-#include "io.h"
-#include "fs.h"
 #include "shell.h"
+#include "fs.h"
 
 // Allowed fs data structures
 uint32_t fat[1024];
@@ -107,11 +106,7 @@ void fs_test()
 
 int main()
 {
-  io_test();
-
-  fs_test();
-
-//  shell();
-	return 0;
+  shell();
+  return 0;
 }
 

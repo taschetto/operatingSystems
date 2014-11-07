@@ -11,6 +11,7 @@
 
 void ok();
 void error();
+char ** tokenize(char*, int*);
 
 //#define TRACE() printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__)
 #define TRACE()
