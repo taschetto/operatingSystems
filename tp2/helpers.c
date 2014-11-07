@@ -1,5 +1,4 @@
 #include "helpers.h"
-#include <stdio.h>
 #include <string.h>
 #include <errno.h>
 
@@ -12,3 +11,4 @@ void error()
 {
   printf("%s [ ERROR ]%s %s (errno=%d).\n", RED, RESET, strerror(errno), errno);
 }
+

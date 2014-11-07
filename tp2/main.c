@@ -73,6 +73,7 @@ void fs_test()
 {
 	const char *path1[] = {""};
 	const char *path2[] = {"etc"};
+	uint8_t data[] = "Chegou o disco voador";
 
 	load_fs("fat.part");
 
@@ -96,6 +97,10 @@ void fs_test()
 			printf ("%s     %s\n", dir[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", dir[i].filename);
 		}
 	}
+	// Write to several clusters...sorry for the mess! :)
+	for (int i = 0; i < 512; i++) {
+		write_to_file(path2, 1, "fstab", data, sizeof(data) - 1);
+	}
 
 	unload_fs();
 }
@@ -106,7 +111,7 @@ int main()
 
   fs_test();
 
-  shell();
+//  shell();
 	return 0;
 }
 
