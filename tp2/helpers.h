@@ -9,5 +9,6 @@
 
 void ok();
 void error();
+char ** tokenize(char*, int*);
 
 #endif // HELPERS_H
