@@ -44,6 +44,11 @@ void io_test()
     return;
   }
 
+//  for (int i = 0; i < 1024; i++) {
+//	  memset(data_block, i%255, CLUSTER_SIZE);
+//	  status = write_cluster(i, data_block);
+//  }
+
   ok();
   printf("Read from 'test_cluster'...");
 
@@ -72,7 +77,9 @@ void fs_test()
 {
 	const char *path1[] = {""};
 	const char *path2[] = {"etc"};
-	uint8_t data[] = "Chegou o disco voador";
+	uint8_t data[] = "0123456789";
+	uint8_t *read_data;
+	unsigned int file_size;
 
 	load_fs("fat.part");
 
@@ -91,18 +98,33 @@ void fs_test()
 		}
 	}
 
-	rm_file(path2, 1, "fstab");
+//	rm_file(path2, 1, "fstab");
 	list_dir(path2, 1);
 
 	for (int i = 0; i < 64; i++) {
 		if (dir[i].first_block > 0) {
-			printf ("%s     %s\n", dir[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", dir[i].filename);
+//			printf ("%s     %s\n", dir[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", dir[i].filename);
 		}
 	}
 	// Write to several clusters...sorry for the mess! :)
 	for (int i = 0; i < 512; i++) {
 		write_to_file(path2, 1, "fstab", data, sizeof(data) - 1);
 	}
+
+
+	get_file_size(path2, 1, "fstab", &file_size);
+
+
+	read_data = malloc(file_size + 1);
+	printf("file_size1: %d\n", file_size);
+	read_from_file(path2, 1, "fstab", read_data, &file_size);
+	printf("file_size2: %d\n", file_size);
+	read_data[file_size] = 0;
+	//	printf("CONTENT:%s", read_data);
+
+	free(read_data);
+
+
 
 	unload_fs();
 }

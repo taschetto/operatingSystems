@@ -499,3 +499,86 @@ int rm_file(const char *path[], int path_depth, char *file_name)
 
 	return 0;
 }
+
+int get_file_size(const char *path[], int path_depth, char *file_name, unsigned int *file_size)
+{
+	unsigned int dir_entries_index;
+	int entry_index;
+	int status;
+
+	// get the parent directory cluster index
+	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
+	if (status != 0) {
+		return -1;
+	}
+	// Read the parent directory
+	status = read_cluster(dir_entries_index, (uint8_t *)dir);
+	if (status != 0) {
+		return -1;
+	}
+	// Find the entry that will be deleted
+	status = find_entry(file_name, dir, &entry_index);
+	if (status != 0) {
+		return -1;
+	}
+	// Test.This commando only works on files.
+	if (dir[entry_index].attributes != DIR_ENTRY_ATTR_FILE) {
+		return -1;
+	}
+
+	*file_size = dir[entry_index].size;
+
+	return 0;
+}
+
+int read_from_file(const char *path[], int path_depth, char *file_name, uint8_t *data, unsigned int *data_size)
+{
+	int status;
+	unsigned int dir_entries_index;
+	int entry_index;
+	unsigned int next_cluster;
+	int to_be_read;
+
+
+	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
+	if (status != 0) {
+		return -1;
+	}
+
+	status = read_cluster(dir_entries_index, (uint8_t *)dir);
+	if (status != 0) {
+		return -1;
+	}
+
+	status = find_entry(file_name, dir, &entry_index);
+	if (status != 0) {
+		return -1;
+	}
+
+	if (dir[entry_index].attributes != DIR_ENTRY_ATTR_FILE) {
+		return -1;
+	}
+
+	read_fat();
+
+	*data_size = 0;
+	to_be_read = dir[entry_index].size;
+	next_cluster = dir[entry_index].first_block;
+	while (next_cluster != FAT_EOF) {
+		read_cluster(next_cluster, data_block);
+		if (to_be_read < CLUSTER_SIZE) {
+			memcpy(data, data_block, to_be_read);
+			data += to_be_read;
+			*data_size += to_be_read;
+			to_be_read = 0;
+		} else {
+			memcpy(data, data_block, CLUSTER_SIZE);
+			data += CLUSTER_SIZE;
+			*data_size += CLUSTER_SIZE;
+			to_be_read -= CLUSTER_SIZE;
+		}
+		next_cluster = fat[next_cluster];
+	}
+
+	return 0;
+}

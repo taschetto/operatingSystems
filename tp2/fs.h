@@ -31,5 +31,7 @@ int list_dir(const char *path[], int path_depth);
 int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *data, unsigned int data_size);
 int rm_dir(const char *path[], int path_depth, char *dir_name);
 int rm_file(const char *path[], int path_depth, char *file_name);
-
+int read_from_file(const char *path[], int path_depth, char *file_name, uint8_t *data, unsigned int *data_size);
+int get_file_size(const char *path[], int path_depth, char *file_name, unsigned int *file_size);
 #endif // FS_H
+
