@@ -16,10 +16,10 @@ void error()
   printf("%s [ ERROR ]%s\n%s (errno=%d).\n", RED, RESET, strerror(errno), errno);
 }
 
-char ** tokenize(char* str, int* count)
+char ** tokenize(char* str, int* count, char* delim)
 {
   char** tokens= NULL;
-  char* token = strtok(str, DELIM);
+  char* token = strtok(str, delim);
   int n = 0;
 
   while (token) {
@@ -27,7 +27,7 @@ char ** tokenize(char* str, int* count)
     if (tokens == NULL) exit(-1);
 
     tokens[n - 1] = token;
-    token = strtok(NULL, DELIM);
+    token = strtok(NULL, delim);
   }
 
   tokens = realloc(tokens, sizeof(char*) * (n + 1));

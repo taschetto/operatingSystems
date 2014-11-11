@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "helpers.h"
-#include "io.h"
 #include "fs_cmd.h"
 
 #define BUFFER_SIZE 512
@@ -63,7 +62,7 @@ int shell()
     printf("%sfat%s> ", BLUE, RESET);
     fgets(buffer, BUFFER_SIZE, stdin);
 
-    tokens = tokenize(buffer, &count);
+    tokens = tokenize(buffer, &count, " \n\0");
     if (count == 0) continue;
 
     enum command cmd = map(tokens[0]);
