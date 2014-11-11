@@ -11,20 +11,14 @@ extern struct dir_entry dir[64];
 
 void fs_init()
 {
-  printf("Initializing file system...");
   if (create_new_fs("fat.part") < 0)
-    error();
-  else
-    ok();
+    printf("%s'init' failed!%s\n", RED, RESET);
 }
 
 void fs_load()
 {
-  printf("Loading file system from 'fat.part'...");
   if (load_fs("fat.part") < 0)
-    error();
-  else
-    ok();
+    printf("%s'load' failed!%s\n", RED, RESET);
 }
 
 void fs_ls(char* dirpath)
@@ -150,6 +144,8 @@ void fs_write(char* content, char* filepath)
   p = dirname(dirc);
   f = basename(basec);
 
+  printf("dirname=%s, basename=%s\n", p, f);
+
   char** path = NULL;
   int depth;
 
@@ -162,7 +158,7 @@ void fs_write(char* content, char* filepath)
   else
     path = tokenize(p, &depth, "/\0");
 
-  if (write_to_file((const char**)path, depth, f, (uint8_t*)content, (char)strlen(content)) < 0)
+  if (write_to_file((const char**)path, depth, f, (uint8_t*)content, (char)strlen(content) - 1) < 0)
     printf("%s'write' failed!%s\n", RED, RESET);
 }
 
@@ -194,7 +190,6 @@ void fs_cat(char* filepath)
     return;
   }
 
-  printf("cat com sucesso\n");
-
-  printf("%s\n", (char*)content);
+  if (content_size > 0)
+    printf("%s\n", content);
 }
