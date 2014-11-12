@@ -7,8 +7,10 @@
 #define GREEN  "\033[1;32m"
 #define YELLOW "\033[1;33m"
 #define BLUE   "\033[1;34m"
+#define XXXX   "\033[1;30m"
 #define RESET  "\033[0m"
 
+void fail(char*);
 void ok();
 void error();
 char ** tokenize(char*, int*, char*);

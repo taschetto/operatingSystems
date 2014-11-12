@@ -132,6 +132,7 @@ void fs_test()
 int main()
 {
   shell();
+  unload_fs();
   return 0;
 }
 

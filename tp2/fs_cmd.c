@@ -9,35 +9,46 @@
 
 extern struct dir_entry dir[64];
 
+char* get_color(uint8_t attr)
+{
+  return attr == DIR_ENTRY_ATTR_DIRECTORY ? XXXX : YELLOW;
+}
+
+char* get_label(uint8_t attr)
+{
+  return attr == DIR_ENTRY_ATTR_DIRECTORY ? "d" : "f";
+}
+
 void fs_init()
 {
   if (create_new_fs("fat.part") < 0)
-    printf("%s'init' failed!%s\n", RED, RESET);
+    fail("'init' failed!\n");
 }
 
 void fs_load()
 {
   if (load_fs("fat.part") < 0)
-    printf("%s'load' failed!%s\n", RED, RESET);
+    fail("'load' failed!\n");
 }
 
 void fs_ls(char* dirpath)
 {
-  char** path = NULL;
-  int depth;
-  path = tokenize(dirpath, &depth, "/\0");
+  int depth = 0;
+  char** path = tokenize(dirpath, &depth, "/\0");
 
   if (list_dir((const char**)path, depth) < 0)
   {
-    printf("%s'ls' failed!%s\n", RED, RESET);
+    fail("'ls' failed!\n");
     return;
   }
 
   for (int i = 0; i < 64; i++) {
     if (dir[i].first_block > 0) {
-      printf ("%s     %s\n", dir[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", dir[i].filename);
+      printf ("%s%s\t%s\n%s", get_color(dir[i].attributes), get_label(dir[i].attributes), dir[i].filename, RESET);
     }
   }
+
+  free(path);
 }
 
 void fs_mkdir(char* dirpath)
@@ -49,19 +60,20 @@ void fs_mkdir(char* dirpath)
   f = basename(basec);
 
   char** path = NULL;
-  int depth;
+  int depth = 0;
 
   if (p[0] == '.')
   {
     path = malloc(sizeof(char));
     path[0] = "";
-    depth = 0;
   }
   else
     path = tokenize(p, &depth, "/\0");
 
   if (create_file_or_dir((const char**)path, depth, f, DIR_ENTRY_ATTR_DIRECTORY) < 0)
-    printf("%s'mkdir' failed!%s\n", RED, RESET);
+    fail("'mkdir' failed!\n");
+
+  free(path);
 }
 
 void fs_rmdir(char* dirpath)
@@ -73,19 +85,20 @@ void fs_rmdir(char* dirpath)
   f = basename(basec);
 
   char** path = NULL;
-  int depth;
+  int depth = 0;
 
   if (p[0] == '.')
   {
     path = malloc(sizeof(char));
     path[0] = "";
-    depth = 0;
   }
   else
     path = tokenize(p, &depth, "/\0");
 
   if (rm_dir((const char**)path, depth, f) < 0)
-    printf("%s'rmdir' failed!%s\n", RED, RESET);
+    fail("'rmdir' failed!\n");
+
+  free(path);
 }
 
 void fs_create(char* filepath)
@@ -97,7 +110,7 @@ void fs_create(char* filepath)
   f = basename(basec);
 
   char** path = NULL;
-  int depth;
+  int depth = 0;
 
   if (p[0] == '.')
   {
@@ -109,7 +122,9 @@ void fs_create(char* filepath)
     path = tokenize(p, &depth, "/\0");
 
   if (create_file_or_dir((const char**)path, depth, f, DIR_ENTRY_ATTR_FILE) < 0)
-    printf("%s'create' failed!%s\n", RED, RESET);
+    fail("'create' failed!\n");
+
+  free(path);
 }
 
 void fs_rm(char* filepath)
@@ -121,19 +136,20 @@ void fs_rm(char* filepath)
   f = basename(basec);
 
   char** path = NULL;
-  int depth;
+  int depth = 0;
 
   if (p[0] == '.')
   {
     path = malloc(sizeof(char));
     path[0] = "";
-    depth = 0;
   }
   else
     path = tokenize(p, &depth, "/\0");
 
   if (rm_file((const char**)path, depth, f) < 0)
-    printf("%s'rm' failed!%s\n", RED, RESET);
+    fail("'rm' failed!\n");
+
+  free(path);
 }
 
 void fs_write(char* content, char* filepath)
@@ -144,22 +160,21 @@ void fs_write(char* content, char* filepath)
   p = dirname(dirc);
   f = basename(basec);
 
-  printf("dirname=%s, basename=%s\n", p, f);
-
   char** path = NULL;
-  int depth;
+  int depth = 0;
 
   if (p[0] == '.')
   {
     path = malloc(sizeof(char));
     path[0] = "";
-    depth = 0;
   }
   else
     path = tokenize(p, &depth, "/\0");
 
   if (write_to_file((const char**)path, depth, f, (uint8_t*)content, (char)strlen(content) - 1) < 0)
-    printf("%s'write' failed!%s\n", RED, RESET);
+    fail("'write' failed!\n");
+
+  free(path);
 }
 
 void fs_cat(char* filepath)
@@ -171,13 +186,12 @@ void fs_cat(char* filepath)
   f = basename(basec);
 
   char** path = NULL;
-  int depth;
+  int depth = 0;
 
   if (p[0] == '.')
   {
     path = malloc(sizeof(char));
     path[0] = "";
-    depth = 0;
   }
   else
     path = tokenize(p, &depth, "/\0");
@@ -186,10 +200,13 @@ void fs_cat(char* filepath)
   unsigned int content_size = 0;
   if (read_from_file((const char**)path, depth, f, (uint8_t*)content, &content_size) < 0)
   {
-    printf("%s'cat' failed!%s\n", RED, RESET);
+    fail("'cat' failed!\n");
     return;
   }
 
   if (content_size > 0)
     printf("%s\n", content);
+
+  free(path);
+  free(content);
 }

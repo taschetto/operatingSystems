@@ -68,13 +68,13 @@ int shell()
     enum command cmd = map(tokens[0]);
     if (cmd == UNKNOWN)
     {
-      printf("Unknown command '%s'.\n", tokens[0]);
+      printf("%sShell error: unknown command '%s'.\n%s", RED, tokens[0], RESET);
       continue;
     }
 
     if (validate(cmd, count) < 0)
     {
-      printf("'%s' error: invalid arguments.\n", tokens[0]);
+      printf("%sShell error: invalid arguments for '%s'.\n%s", RED, tokens[0], RESET);
       continue;
     }
 

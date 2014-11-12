@@ -1,10 +1,14 @@
+#define _BSD_SOURCE
 #include "helpers.h"
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <libgen.h>
 
-#define DELIM " \n\0"
+void fail(char* message)
+{
+  printf("%s%s%s", RED, message, RESET);
+}
 
 void ok()
 {
@@ -13,7 +17,8 @@ void ok()
 
 void error()
 {
-  printf("%s [ ERROR ]%s\n%s (errno=%d).\n", RED, RESET, strerror(errno), errno);
+  if (errno != 0) // 0 == SUCCESS
+    printf("%s [ ERROR ]%s\n%s (errno=%d).\n", RED, RESET, strerror(errno), errno);
 }
 
 char ** tokenize(char* str, int* count, char* delim)
@@ -34,7 +39,6 @@ char ** tokenize(char* str, int* count, char* delim)
   tokens[n] = 0;
 
   *count = n;
-  
+
   return tokens;
 }
-
