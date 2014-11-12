@@ -11,7 +11,7 @@ extern struct dir_entry dir[64];
 
 char* get_color(uint8_t attr)
 {
-  return attr == DIR_ENTRY_ATTR_DIRECTORY ? XXXX : YELLOW;
+  return attr == DIR_ENTRY_ATTR_DIRECTORY ? GRAY : YELLOW;
 }
 
 char* get_label(uint8_t attr)
