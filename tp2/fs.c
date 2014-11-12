@@ -43,6 +43,8 @@ int cluster_index_from_path(const char *path[], int path_depth, unsigned int *di
 			}
 			if (next_cluster_index != current_cluster_index) {
 				current_cluster_index = next_cluster_index;
+                status = read_cluster(current_cluster_index, (uint8_t*)dir);
+                if (status != 0) break;
 			} else {
 				break;
 			}
