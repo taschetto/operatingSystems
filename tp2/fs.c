@@ -336,7 +336,7 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 	int new_total_clusters;
 	int additional_clusters;
 	int last_cluster;
-	int allocated_clusters;
+    int allocated_clusters = 0;
 
 	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
 	if (status == 0) {
