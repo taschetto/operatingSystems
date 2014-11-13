@@ -131,7 +131,6 @@ void fs_test()
 
 int main()
 {
-  fs_test();
   shell();
   unload_fs();
   return 0;

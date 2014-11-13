@@ -171,7 +171,7 @@ void fs_write(char content[], char* filepath)
   else
     path = tokenize(p, &depth, "/\0");
 
-  if (write_to_file((const char**)path, depth, f, content, sizeof(content) - 1) < 0)
+  if (write_to_file((const char**)path, depth, f, (uint8_t*)content, strlen(content)) < 0)
     fail("'write' failed!\n");
 
   free(path);
