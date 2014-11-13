@@ -152,7 +152,7 @@ void fs_rm(char* filepath)
   free(path);
 }
 
-void fs_write(char* content, char* filepath)
+void fs_write(char content[], char* filepath)
 {
   char *dirc, *basec, *p, *f;
   dirc = strdup(filepath);
@@ -171,7 +171,7 @@ void fs_write(char* content, char* filepath)
   else
     path = tokenize(p, &depth, "/\0");
 
-  if (write_to_file((const char**)path, depth, f, (uint8_t*)content, (char)strlen(content) - 1) < 0)
+  if (write_to_file((const char**)path, depth, f, content, sizeof(content) - 1) < 0)
     fail("'write' failed!\n");
 
   free(path);
@@ -196,17 +196,21 @@ void fs_cat(char* filepath)
   else
     path = tokenize(p, &depth, "/\0");
 
-  char* content = NULL;
-  unsigned int content_size = 0;
-  if (read_from_file((const char**)path, depth, f, (uint8_t*)content, &content_size) < 0)
+  unsigned int file_size;
+  get_file_size((const char**)path, depth, f, &file_size);
+
+  uint8_t *read_data;
+  read_data = malloc(file_size + 1);
+
+  if (read_from_file((const char**)path, depth, f, read_data, &file_size) < 0)
   {
     fail("'cat' failed!\n");
     return;
   }
 
-  if (content_size > 0)
-    printf("%s\n", content);
+  read_data[file_size] = 0;
+  printf("%s\n", read_data);
 
   free(path);
-  free(content);
+  free(read_data);
 }

@@ -107,9 +107,9 @@ void fs_test()
 		}
 	}
 	// Write to several clusters...sorry for the mess! :)
-	for (int i = 0; i < 512; i++) {
+	//for (int i = 0; i < 512; i++) {
 		write_to_file(path2, 1, "fstab", data, sizeof(data) - 1);
-	}
+	//}
 
 
 	get_file_size(path2, 1, "fstab", &file_size);
@@ -120,7 +120,7 @@ void fs_test()
 	read_from_file(path2, 1, "fstab", read_data, &file_size);
 	printf("file_size2: %d\n", file_size);
 	read_data[file_size] = 0;
-	//	printf("CONTENT:%s", read_data);
+	printf("CONTENT:%s", read_data);
 
 	free(read_data);
 
@@ -131,6 +131,7 @@ void fs_test()
 
 int main()
 {
+  fs_test();
   shell();
   unload_fs();
   return 0;

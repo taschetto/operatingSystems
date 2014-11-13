@@ -291,7 +291,6 @@ int write_data_to_clusters(int first_cluster, int start_index, uint8_t *data, in
 	int full_clusters;
 	int next_cluster;
 
-	TRACE();
 	free_space = CLUSTER_SIZE - start_index;
 //	printf("free space: %d\n", free_space);
 	size = free_space > data_size ? data_size : free_space;
@@ -303,9 +302,7 @@ int write_data_to_clusters(int first_cluster, int start_index, uint8_t *data, in
 
 	next_cluster = fat[first_cluster];
 	while (full_clusters > 0) {
-		TRACE();
 		if (next_cluster == FAT_EOF) {
-			TRACE();
 			data_size = 0;
 			break;
 		}
@@ -317,9 +314,7 @@ int write_data_to_clusters(int first_cluster, int start_index, uint8_t *data, in
 	}
 
 	if (next_cluster != FAT_EOF) {
-		TRACE();
 		if (data_size > 0) {
-			TRACE();
 			memcpy(data_block, data, data_size);
 			status = write_cluster(next_cluster, data_block);
 		}
@@ -331,6 +326,7 @@ int write_data_to_clusters(int first_cluster, int start_index, uint8_t *data, in
 
 int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *data, unsigned int data_size)
 {
+	read_fat();
 	int status;
 	unsigned int dir_entries_index;
 	int entry_index;
@@ -342,15 +338,12 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 	int last_cluster;
 	int allocated_clusters;
 
-	TRACE();
 	status = cluster_index_from_path(path, path_depth, &dir_entries_index);
 	if (status == 0) {
-		TRACE();
 		status = read_cluster(dir_entries_index, (uint8_t *)dir);
 		if (status == 0) {
 			status = find_entry(file_name, dir, &entry_index);
 			if (status == 0) {
-				TRACE();
 				// This command only works with regular files!
 				if (dir[entry_index].attributes != DIR_ENTRY_ATTR_FILE) {
 					return -1;
@@ -367,7 +360,6 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 						(((dir[entry_index].size + data_size) % CLUSTER_SIZE) > 0 ? 1 : 0);
 				additional_clusters = new_total_clusters - total_clusters;
 				get_last_cluster(dir[entry_index].first_block, &last_cluster);
-
 //				printf("###############################\n");
 //				printf("# full clusters: %d\n",full_clusters);
 //				printf("# bytes in last cluster: %d\n",bytes_in_last_cluster);
@@ -378,7 +370,6 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 //				printf("###############################\n");
 
 				if (additional_clusters > 0) {
-					TRACE();
 					allocated_clusters = alloc_clusters(last_cluster, additional_clusters);
 				}
 				status = write_data_to_clusters(last_cluster, bytes_in_last_cluster, data, data_size);
@@ -386,7 +377,6 @@ int write_to_file(const char *path[], int path_depth, char *file_name, uint8_t *
 				dir[entry_index].size = dir[entry_index].size + data_size;
 				write_cluster(dir_entries_index, (uint8_t*)dir);
 				if (allocated_clusters != additional_clusters) {
-					TRACE();
 					status = -1;
 				}
 			}

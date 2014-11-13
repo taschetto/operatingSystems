@@ -15,7 +15,7 @@ void ok();
 void error();
 char ** tokenize(char*, int*, char*);
 
-//#define TRACE() printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__)
-#define TRACE()
+#define TRACE() printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__)
+//#define TRACE()
 
 #endif // HELPERS_H
