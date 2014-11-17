@@ -23,6 +23,8 @@ void fs_init()
 {
   if (create_new_fs("fat.part") < 0)
     fail("'init' failed!\n");
+
+  format();
 }
 
 void fs_load()

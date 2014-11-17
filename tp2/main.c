@@ -76,13 +76,15 @@ void io_test()
 void fs_test()
 {
 	const char *path1[] = {""};
-	const char *path2[] = {"etc"};
+	const char *path2[] = {"y"};
 	uint8_t data[] = "0123456789";
 	uint8_t *read_data;
 	unsigned int file_size;
 
-	load_fs("fat.part");
 
+
+	load_fs("fat.part");
+/*
 	format();
 
 	create_file_or_dir(path1, 0, "etc", DIR_ENTRY_ATTR_DIRECTORY);
@@ -105,14 +107,14 @@ void fs_test()
 		if (dir[i].first_block > 0) {
 //			printf ("%s     %s\n", dir[i].attributes==DIR_ENTRY_ATTR_DIRECTORY?"D":"F", dir[i].filename);
 		}
-	}
+	}*/
 	// Write to several clusters...sorry for the mess! :)
-	//for (int i = 0; i < 512; i++) {
-		write_to_file(path2, 1, "fstab", data, sizeof(data) - 1);
-	//}
+	for (int i = 0; i < 512; i++) {
+		write_to_file(path2, 1, "asd", data, sizeof(data) - 1);
+	}
 
 
-	get_file_size(path2, 1, "fstab", &file_size);
+/**	get_file_size(path2, 1, "fstab", &file_size);
 
 
 	read_data = malloc(file_size + 1);
@@ -126,7 +128,7 @@ void fs_test()
 
 
 
-	unload_fs();
+	unload_fs();*/
 }
 
 int main()
